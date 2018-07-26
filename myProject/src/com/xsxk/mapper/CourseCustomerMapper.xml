@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xsxk.mapper.CourseCustomerMapper">
+	<select id="selectCourses" resultType="com.xsxk.pojo.customer.CourseCustomer">
+		SELECT
+			id,
+			cname,
+			hours,
+			type,
+			rid,
+			tid ctid,
+			(
+				SELECT
+					name
+				FROM
+					t_teacher t
+				WHERE
+					 t.id=ctid
+			) tname,
+			(
+				SELECT
+					address
+				FROM
+					t_room
+				WHERE
+					rid=id
+			)room
+		FROM
+			t_course
+	</select>
+	<select id="getCoursInfoByid" parameterType="java.lang.Integer" resultType="com.xsxk.pojo.customer.CourseCustomer">
+		SELECT
+			id,
+			cname,
+			hours,
+			type,
+			rid,
+			tid ctid,
+			(
+				SELECT
+					name
+				FROM
+					t_teacher t
+				WHERE
+					 t.id=ctid
+			) tname,
+			(
+				SELECT
+					address
+				FROM
+					t_room
+				WHERE
+					rid=id
+			)room
+		FROM
+			t_course
+		WHERE 
+			id=#{id,jdbcType=INTEGER}	
+	</select>
+	<select id="getCourseInfoBySid" parameterType="java.lang.Integer" resultType="com.xsxk.pojo.customer.CourseCustomer">
+		SELECT
+			id,
+			cname,
+			hours,
+			type,
+			tid,
+			rid,
+			(
+				SELECT
+					NAME
+				FROM
+					t_teacher t
+				WHERE
+					c.tid = t.id
+			) tname,
+			(
+				SELECT
+					address
+				FROM
+					t_room r
+				WHERE
+					rid = r.id
+			) room
+		FROM
+			t_course c
+		WHERE
+			c.id IN (
+				SELECT
+					cid
+				FROM
+					t_student_course
+				WHERE
+					sid = #{sid,jdbcType=INTEGER}
+			)
+	</select>
+	<select id="getTeacherCourses" parameterType="java.lang.Integer" resultType="com.xsxk.pojo.customer.CourseCustomer">
+		SELECT
+			id,
+			cname,
+			type,
+			hours,
+			rid,
+			(
+				SELECT
+					address
+				FROM
+					t_room r
+				WHERE
+					r.id = rid
+			) room
+		FROM
+			t_course
+		WHERE
+			tid = #{tid,jdbcType=INTEGER}
+	</select>
+	<select id="getStudentsByTid" parameterType="java.lang.Integer" resultType="com.xsxk.pojo.TStudent">
+		SELECT
+			id,
+			sid,
+			NAME,
+			sex,
+			department
+		FROM
+			t_student
+		WHERE
+			id IN (
+				SELECT
+					sid
+				FROM
+					t_student_course
+				WHERE
+					cid IN (
+						SELECT
+							id
+						FROM
+							t_course
+						WHERE
+							tid = #{tid,jdbcType=INTEGER}
+					)
+			)
+	</select>
+</mapper>

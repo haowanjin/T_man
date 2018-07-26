@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- 事务管理器 -->
+	<!-- <bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		数据源
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	通知
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			传播行为
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="create*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+			<tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	切面
+	<aop:config>
+		<aop:advisor advice-ref="txAdvice"
+			pointcut="execution(* com.xsxk.service.*.*(..))" />
+	</aop:config> -->
+	
+	<bean id="daoImpl" class="com.xsxk.test.TestAOPDaoImpl"/>
+    <bean id="testAOPService" class="com.xsxk.test.TestAOPServiceImpl"/>
+    <bean id="logAdivice" class="com.xsxk.test.LogAdivice"/>
+    <bean id="timeAdvice" class="com.xsxk.test.TimeAdvice"/>
+
+    <aop:config>
+       <!-- 配置一个切面 -->
+       <aop:aspect id="logaop" ref="logAdivice" order="2">
+           <!-- 定义切入点，表示对service的所有方法都进行拦截 -->
+           <aop:pointcut expression="execution(* com.xsxk.test.TestAOPServiceImpl.*(..))" id="testpointcut"/>
+           <!-- 定义前置通知 -->
+           <aop:before method="myBeforeAdivice" pointcut-ref="testpointcut"/>
+           <!-- 定义后置通知 -->
+           <aop:after-returning method="myAfterAdivice" pointcut-ref="testpointcut"/>
+           <!-- 定义环绕通知 -->
+           <aop:around method="myAroundAdivice" pointcut-ref="testpointcut"/>
+       </aop:aspect>
+
+       <!-- 定义另一个切面 -->
+       <aop:aspect id="timeaop" ref="timeAdvice" order="1">
+           <!-- 定义切入点，表示对service的所有方法都进行拦截 -->
+           <aop:pointcut expression="execution(* com.xsxk.test.TestAOPServiceImpl.*(..))" id="testpointcut1"/>
+           <!-- 定义前置通知 -->
+           <aop:before method="timeBefore" pointcut-ref="testpointcut1"/>
+           <!-- 定义后置通知 -->
+           <aop:after-returning method="timeAfter" pointcut-ref="testpointcut1"/>
+       </aop:aspect>
+    </aop:config>
+</beans>

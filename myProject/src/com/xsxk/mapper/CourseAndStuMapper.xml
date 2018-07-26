@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xsxk.mapper.CourseAndStuMapper">
+    <insert id="inserCidAndSid" parameterType="com.xsxk.pojo.customer.StuCourse" >
+    	insert into
+    		 t_student_course (sid,cid)
+    	values (#{sid,jdbcType=INTEGER},#{cid,jdbcType=INTEGER})
+    </insert>
+    <select id="checkExist" parameterType="com.xsxk.pojo.customer.StuCourse" resultType="java.lang.Integer" >
+    	select count(*) 
+    	from 
+    		t_student_course 
+    	where 
+    		sid=#{sid,jdbcType=INTEGER} 
+    	and 
+    		cid=#{cid,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteSidAndCid" parameterType="com.xsxk.pojo.customer.StuCourse"  >
+    	delete  FROM t_student_course WHERE sid=#{sid,jdbcType=INTEGER}  and cid=#{cid,jdbcType=INTEGER}
+    </delete>
+</mapper>
